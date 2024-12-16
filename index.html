@@ -1,0 +1,1076 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitness Q&amp;A</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: linear-gradient(45deg, #38b2ac, #4299e1); /* Tailwind green-400 and blue-500 */
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+    }
+
+    /* Animation for the gradient background */
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    /* Ensuring content is centered */
+    .content {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+    }
+
+    .faq-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* Creates three equal columns */
+      gap: 20px; /* Space between the cards */
+      padding: 20px; /* Optional: Add padding around the container */
+    }
+
+    .faq-item {
+      opacity: 0; /* Start hidden for fade effect */
+      transition: opacity 0.5s ease; /* Fade transition */
+    }
+
+    .faq-item.active {
+      opacity: 1; /* Fully visible when active */
+    }
+
+    .flip-card {
+      background-color: transparent;
+      width: 190px;
+      height: 254px;
+      perspective: 1000px;
+      font-family: sans-serif;
+    }
+
+    .title {
+      font-size: 1.5em;
+      font-weight: 900;
+      text-align: center;
+      margin: 0;
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+    }
+
+    .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front, .flip-card-back {
+      box-shadow: 0 8px 14px 0 rgba(0,0,0,0.2);
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border: 1px solid coral;
+      border-radius: 1rem;
+    }
+
+    .flip-card-front {
+      background: linear-gradient(120deg, bisque 60%, rgb(255, 231, 222) 88%,
+        rgb(255, 211, 195) 40%, rgba(255, 127, 80, 0.603) 48%);
+      color: coral;
+    }
+
+    .flip-card-back {
+      background: linear-gradient(120deg, rgb(255, 174, 145) 30%, coral 88%,
+        bisque 40%, rgb(255, 185, 160) 78%);
+      color: white;
+      transform: rotateY(180deg);
+    }
+
+    /* Added to manage modal visibility */
+    .hidden { display: none; }
+    .show { display: block; }
+    .modal {
+      width: 350px;
+      height: 350px;
+    }
+    /* From uiverse.io by @satyamchaudharydev */
+/* this button is inspired by -- whatsapp input */
+/* == type to see fully interactive and click the close buttom to remove the text  == */
+/* From uiverse.io by @satyamchaudharydev */
+/* this button is inspired by -- whatsapp input */
+/* == type to see fully interactive and click the close buttom to remove the text  == */
+
+.form {
+  --input-bg: #FFf;
+ /*  background of input */
+  --padding: 1.5em;
+  --rotate: 80deg;
+ /*  rotation degree of input*/
+  --gap: 2em;
+  /*  gap of items in input */
+  --icon-change-color: #15A986;
+ /*  when rotating changed icon color */
+  --height: 40px;
+ /*  height */
+  width: 200px;
+  padding-inline-end: 1em;
+ /*  change this for padding in the end of input */
+  background: var(--input-bg);
+  position: relative;
+  border-radius: 4px;
+}
+
+.form label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: var(--height);
+}
+
+.form input {
+  width: 100%;
+  padding-inline-start: calc(var(--padding) + var(--gap));
+  outline: none;
+  background: none;
+  border: 0;
+}
+/* style for both icons -- search,close */
+.form svg {
+  /* display: block; */
+  color: #111;
+  transition: 0.3s cubic-bezier(.4,0,.2,1);
+  position: absolute;
+  height: 15px;
+}
+/* search icon */
+.icon {
+  position: absolute;
+  left: var(--padding);
+  transition: 0.3s cubic-bezier(.4,0,.2,1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* arrow-icon*/
+.swap-off {
+  transform: rotate(-80deg);
+  opacity: 0;
+  visibility: hidden;
+}
+/* close button */
+.close-btn {
+  /* removing default bg of button */
+  background: none;
+  border: none;
+  right: calc(var(--padding) - var(--gap));
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111;
+  padding: 0.1em;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transition: 0.3s;
+  opacity: 0;
+  transform: scale(0);
+  visibility: hidden;
+}
+
+.form input:focus ~ .icon {
+  transform: rotate(var(--rotate)) scale(1.3);
+}
+
+.form input:focus ~ .icon .swap-off {
+  opacity: 1;
+  transform: rotate(-80deg);
+  visibility: visible;
+  color: var(--icon-change-color);
+}
+
+.form input:focus ~ .icon .swap-on {
+  opacity: 0;
+  visibility: visible;
+}
+
+.form input:valid ~ .icon {
+  transform: scale(1.3) rotate(var(--rotate))
+}
+
+.form input:valid ~ .icon .swap-off {
+  opacity: 1;
+  visibility: visible;
+  color: var(--icon-change-color);
+}
+
+.form input:valid ~ .icon .swap-on {
+  opacity: 0;
+  visibility: visible;
+}
+
+.form input:valid ~ .close-btn {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transition: 0s;
+}
+
+.loader {
+    transform: rotateZ(45deg);
+    perspective: 1000px;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    color: #fff;
+  }
+  .loader:before,
+  .loader:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: inherit;
+    height: inherit;
+    border-radius: 50%;
+    transform: rotateX(70deg);
+    animation: 1s spin linear infinite;
+  }
+  .loader:after {
+    color: #0066ff;
+    transform: rotateY(70deg);
+    animation-delay: .4s;
+  }
+
+  @keyframes rotate {
+    0% {
+      transform: translate(-50%, -50%) rotateZ(0deg);
+    }
+    100% {
+      transform: translate(-50%, -50%) rotateZ(360deg);
+    }
+  }
+
+  @keyframes rotateccw {
+    0% {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+      transform: translate(-50%, -50%) rotate(-360deg);
+    }
+  }
+
+  @keyframes spin {
+    0%,
+    100% {
+      box-shadow: .2em 0px 0 0px currentcolor;
+    }
+    12% {
+      box-shadow: .2em .2em 0 0 currentcolor;
+    }
+    25% {
+      box-shadow: 0 .2em 0 0px currentcolor;
+    }
+    37% {
+      box-shadow: -.2em .2em 0 0 currentcolor;
+    }
+    50% {
+      box-shadow: -.2em 0 0 0 currentcolor;
+    }
+    62% {
+      box-shadow: -.2em -.2em 0 0 currentcolor;
+    }
+    75% {
+      box-shadow: 0px -.2em 0 0 currentcolor;
+    }
+    87% {
+      box-shadow: .2em -.2em 0 0 currentcolor;
+    }
+  }
+   
+  .fade-in {
+  opacity: 0;
+  transition: opacity 1s ease-in;
+}
+
+.fade-in.active {
+  opacity: 1;
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+}
+:root {
+  --accent-color: #fff;
+  --gradient-color: #FBFBFB;
+}
+
+.sidebar {
+  position: fixed;
+  width: 240px;
+  left: -240px;
+  height: 100vh; /* Set the height to 100% of the viewport height */
+  background-color: #fff;
+  transition: all .5s ease;
+  bottom: 0; /* Align to the bottom */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.sidebar header{
+  font-size: 28px;
+  color: #353535;
+  line-height: 70px;
+  text-align: center;
+  background-color: #fff;
+  user-select: none;
+  font-family: 'Lato', sans-serif;
+}
+.sidebar a{
+  display: block;
+  height: 65px;
+  width: 100%;
+  color: #353535;
+  line-height: 65px;
+  padding-left: 30px;
+  box-sizing: border-box;
+  border-left: 5px solid transparent;
+  font-family: 'Lato', sans-serif;
+  transition: all .5s ease;
+}
+a.active,a:hover{
+  border-left: 5px solid var(--accent-color);
+  color: #fff;
+   background: linear-gradient(to left, var(--accent-color), var(--gradient-color));
+}
+.sidebar a i{
+  font-size: 23px;
+  margin-right: 16px;
+}
+.sidebar a span{
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+#check{
+  display: none;
+}
+label #btn,label #cancel{
+  position: absolute;
+  left: 5px;
+  cursor: pointer;
+  color: #d6adff;
+  border-radius: 5px;
+  margin: 15px 30px;
+  font-size: 29px;
+  background-color: #e8d1ff;
+  box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
+    inset -7px -7px 10px 0px rgba(0,0,0,.1),
+   3.5px 3.5px 20px 0px rgba(0,0,0,.1),
+   2px 2px 5px 0px rgba(0,0,0,.1);
+  height: 45px;
+  width: 45px;
+  text-align: center;
+  text-shadow: 2px 2px 3px rgba(255,255,255,0.5);
+  line-height: 45px;
+  transition: all .5s ease;
+}
+label #cancel{
+  opacity: 0;
+  visibility: hidden;
+}
+#check:checked ~ .sidebar{
+  left: 0;
+}
+#check:checked ~ label #btn{
+  margin-left: 245px;
+  opacity: 0;
+  visibility: hidden;
+}
+#check:checked ~ label #cancel{
+  margin-left: 245px;
+  opacity: 1;
+  visibility: visible;
+}
+@media(max-width : 860px){
+  .sidebar{
+    height: max-content;
+    width: 70px;
+    left: 0;
+    margin: 100px 0;
+  }
+  header,#btn,#cancel{
+    display: none;
+  }
+  span{
+    position: absolute;
+    margin-left: 23px;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .sidebar a{
+    height: 60px;
+  }
+  .sidebar a i{
+    margin-left: -10px;
+  }
+  a:hover {
+    width: 200px;
+    background: inherit;
+  }
+  .sidebar a:hover span{
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.sidebar > a.active,.sidebar > a:hover:nth-child(even) {
+  --accent-color: #52d6f4;
+  --gradient-color: #c1b1f7;
+}
+.sidebar a.active,.sidebar > a:hover:nth-child(odd) {
+  --accent-color: #c1b1f7;
+  --gradient-color: #A890FE;
+}
+
+
+.frame {
+  width: 50%;
+  height: 30%;
+  margin: auto;
+  text-align: center;
+}
+
+h2 {
+  position: relative;
+  text-align: center;
+  color: #353535;
+  font-size: 60px;
+  font-family: 'Lato', sans-serif;
+  margin: 0;
+  color: #a759f5;
+}
+
+p {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  text-align: center;
+  font-size: 30px;
+  color: #d6adff;
+  margin: 0;
+}
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.hidden {
+    display: none;
+}
+/* BMI Calculator Modal CSS */
+.bmi-modal .form {
+  background-color: #fff;
+  height: auto;
+  width: 450px;
+  border-radius: 20px;
+  margin: 20px auto;
+  display: block;
+  border: solid 1px #289df6;
+  box-shadow: 0 0 40px 0 #ddd;
+}
+
+.bmi-modal .form:hover {
+  box-shadow: 0 0 60px 0 #ccc;
+  transition: .4s;
+  transform: scale(1.02);
+}
+
+.bmi-modal .text-input {
+  width: 100%;
+  height: 30px;
+  border-radius: 10px;
+  background-color: #dbeffe;
+  border: none;
+  outline: none;
+  padding: 5px 10px;
+  margin-bottom: 15px;
+}
+
+.bmi-modal .text-input:hover {
+  background-color: #cbe7fd;
+}
+
+.bmi-modal #submit, .bmi-modal #close-modal {
+  border: none;
+  border-radius: 10px;
+  height: 40px;
+  width: 140px;
+  background-color: #289df6;
+  color: #fff;
+  margin: auto;
+  display: block;
+  outline: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.bmi-modal #submit:hover, .bmi-modal #close-modal:hover {
+  background-color: #0a8ef2;
+}
+
+.bmi-modal .text {
+  display: inline-block;
+  margin: 5px 10px;
+}
+
+.bmi-modal .container {
+  display: inline-block;
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.bmi-modal .container input {
+  position: absolute;
+  opacity: 0;
+}
+
+.bmi-modal .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #dbeffe;
+  border-radius: 50%;
+}
+
+.bmi-modal .container:hover input ~ .checkmark {
+  background-color: #cbe7fd;
+}
+
+.bmi-modal input:checked ~ .checkmark {
+  background-color: #289df6;
+}
+
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-green-400 to-blue-500 text-white py-6">
+    <h1 class="text-center text-4xl font-bold">Fitness Q&amp;A</h1>
+    <p class="text-center mt-2">Your go-to guide for fitness, diets, and training!</p>
+    <input type="checkbox" id="check">
+  <label for="check">
+      <i class="fas fa-bars" id="btn"></i>
+      <i class="fas fa-times" id="cancel"></i>
+  </label>
+  <div class="sidebar">
+      <header>Menu</header>
+      <form class="form">
+          <label for="search">
+              <input required="" autocomplete="off" placeholder="search your chats" id="search" type="text">
+              <div class="icon">
+                  <svg stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="swap-on">
+                      <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linejoin="round" stroke-linecap="round"></path>
+                  </svg>
+                  <svg stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="swap-off">
+                      <path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linejoin="round" stroke-linecap="round"></path>
+                  </svg>
+              </div>
+              <button type="reset" class="close-btn">
+                  <svg viewBox="0 0 20 20" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg">
+                      <path clip-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" fill-rule="evenodd"></path>
+                  </svg>
+              </button>
+          </label>
+      </form>
+      <a href="#">
+          <i class="font-medium text-gray-800 dropdown-trigger" data-category="Gym">Gym</i>
+      </a>
+      <a href="#">
+        <i class="font-medium text-gray-800 dropdown-trigger" data-category="Weights">Weights</i>
+      </a>
+      <a href="#">
+        <i class="font-medium text-gray-800 dropdown-trigger" data-category="Diet">Diet</i>
+      </a>
+      <a href="#">
+        <i class="font-medium text-gray-800 dropdown-trigger" data-category="Cardio">Cardio</i>
+      </a>
+      <a href="#">
+        <i class="font-medium text-gray-800 dropdown-trigger" data-category="Wellness">Wellness</i>
+      </a>
+      <a href="#">
+        <i class="font-medium text-gray-800 dropdown-trigger" data-category="Recovery">Recovery</i>
+      </a>
+      <a href="#">
+        <i class="font-medium text-gray-800 dropdown-trigger" data-category="Nutrition">Nutrition</i>
+      </a>
+      <a href="#">
+        <i id="show-all" class="font-medium text-gray-800">Show All</i>
+      </a>
+      <a href="#" id="open-modal">Open BMI Calculator</a>
+  </div>
+  </header>
+
+  
+  <!-- Main Section -->
+  <main class="max-w-4xl mx-auto mt-8 px-4">
+    <div id="faq-container" class="faq-container"><div class="bg-transparent shadow rounded-lg p-4 faq-item active">
+
+</div></div>
+  </main>
+  
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-6 mt-12">
+    <p class="text-center">Stay Strong. Stay Motivated. Fitness Q&amp;A © 2024</p>
+  </footer>
+
+  <!-- Open Quiz Button Modal -->
+  <div id="open-quiz-modal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50 hidden">
+    <div class="bg-white p-6 rounded-lg modal">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Fitness Trivia</h2>
+        <button id="close-open-quiz" class="text-xl font-bold text-gray-600">×</button>
+      </div>
+      <div id="fact-content" class="mb-4"><p class="text-lg">Did you know? Drinking water before and after a workout can boost your performance and reduce recovery time!</p><p class="mt-4 text-sm text-gray-600">To learn more, enter this trivia!</p></div>
+      <div class="mt-4">
+        <button id="start-quiz-btn" class="bg-blue-500 text-white rounded-lg px-4 py-2 w-full">Start Trivia</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BMI Calculator Modal -->
+<!-- BMI Calculator Modal -->
+<div id="bmi-modal" class="modal bmi-modal hidden">
+  <div class="modal-content">
+    <h3><b>B</b>ody <b>M</b>ass <b>I</b>ndex Calculator</h3>
+    <form class="form" id="form" onsubmit="return validateForm()">
+      <div class="row-one">
+        <input type="text" class="text-input" id="age" autocomplete="off" required>
+        <p class="text">Age</p>
+
+        <label class="container">
+          <input type="radio" name="radio" id="f">
+          <p class="text">Female</p>
+          <span class="checkmark"></span>
+        </label>
+
+        <label class="container">
+          <input type="radio" name="radio" id="m">
+          <p class="text">Male</p>
+          <span class="checkmark"></span>
+        </label>
+      </div>
+
+      <div class="row-two">
+        <input type="text" class="text-input" id="height" autocomplete="off" required>
+        <p class="text">Height (cm)</p>
+
+        <input type="text" class="text-input" id="weight" autocomplete="off" required>
+        <p class="text">Weight (kg)</p>
+      </div>
+
+      <button type="button" id="submit">Submit</button>
+      <button type="button" id="close-modal">Close</button>
+    </form>
+  </div>
+</div>
+
+  <!-- Quiz Modal -->
+  <div id="quiz-modal" class="hidden fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+    <div class="bg-white p-6 rounded-lg modal">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Fitness Quiz</h2>
+        <button id="close-quiz" class="text-xl font-bold text-gray-600">×</button>
+      </div>
+      <div id="quiz-content" class="mb-4">
+        <!-- Random Question will appear here -->
+      </div>
+      <div class="mt-4 flex flex-col gap-2" id="answer-options">
+        <!-- Answer Options -->
+      </div>
+      <div class="mt-4 flex justify-between">
+        <button id="submit-answer" class="bg-green-500 text-white rounded-lg px-4 py-2 w-full">Submit</button>
+      </div>
+    </div>
+  </div>
+  <div id="loader-modal" class="hidden fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+    <span class="loader"></span>
+  </div>
+  <script>
+    document.getElementById("open-modal").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent default anchor behavior
+    document.getElementById("bmi-modal").classList.remove("hidden");
+});
+
+document.getElementById("close-modal").addEventListener("click", function() {
+    document.getElementById("bmi-modal").classList.add("hidden");
+});
+
+// Close modal when clicking outside of it
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById("bmi-modal");
+    if (event.target === modal) {
+        modal.classList.add("hidden");
+    }
+});
+
+// Existing form validation and BMI calculation functions
+var age = document.getElementById("age");
+var height = document.getElementById("height");
+var weight = document.getElementById("weight");
+var male = document.getElementById("m");
+var female = document.getElementById("f");
+var form = document.getElementById("form");
+
+function validateForm() {
+    if (age.value == '' || height.value == '' || weight.value == '' || (male.checked == false && female.checked == false)) {
+        alert("All fields are required!");
+        return false; // Prevent form submission
+    } else {
+        countBmi();
+    }
+}
+
+document.getElementById("submit").addEventListener("click", validateForm);
+
+function countBmi() {
+    var p = [age.value, height.value, weight.value];
+    if (male.checked) {
+        p.push("male");
+    } else if (female.checked) {
+        p.push("female");
+    }
+    form.reset();
+    var bmi = Number(p[2]) / (Number(p[1]) / 100 * Number(p[1]) / 100);
+    
+    var result = '';
+    if (bmi < 18.5) {
+        result = 'Underweight';
+    } else if (18.5 <= bmi && bmi < 24.9) {
+        result = 'Normal weight';
+    } else if (25 <= bmi && bmi < 29.9) {
+        result = 'Overweight';
+    } else {
+        result = 'Obesity';
+    }
+    
+    alert(`Your BMI is ${bmi.toFixed(2)}. You are classified as: ${result}`);
+}
+   const quizData = [
+    { 
+        question: "What is the best time to go to the gym?", 
+        answers: ["Morning", "Evening", "Any time that fits your schedule"], 
+        correctAnswer: "Any time that fits your schedule"
+    },
+    { 
+        question: "Should I lift heavy or light weights?", 
+        answers: ["Heavy weights for strength", "Light weights for endurance", "It depends on your goal"], 
+        correctAnswer: "It depends on your goal"
+    },
+    { 
+        question: "What should I eat after a workout?", 
+        answers: ["Protein shake", "Banana", "Chicken and rice"], 
+        correctAnswer: "Protein shake"
+    }
+];
+
+const facts = [
+    "Did you know? Drinking water before and after a workout can boost your performance and reduce recovery time!",
+    "Exercise helps increase the production of endorphins, your body’s natural painkillers and mood elevators.",
+    "Strength training doesn’t just build muscle; it also improves bone density and overall health.",
+    "A balanced diet, including protein, fats, and carbs, is crucial for fueling workouts and recovery.",
+    "Stretching after workouts can improve flexibility, reduce muscle tension, and prevent injury."
+];
+
+let currentQuestionIndex = 0;
+
+// Get modal and buttons
+const quizModal = document.getElementById('quiz-modal');
+const factContent = document.getElementById('fact-content');
+const quizContent = document.getElementById('quiz-content');
+const answerOptions = document.getElementById('answer-options');
+const submitAnswerButton = document.getElementById('submit-answer');
+const startQuizButton = document.getElementById('start-quiz-btn');
+const closeQuizButton = document.getElementById('close-quiz');
+
+// Function to display a random fact
+const displayFact = () => {
+    const randomFact = facts[Math.floor(Math.random() * facts.length)];
+    factContent.innerHTML = `<p>${randomFact}</p>`;
+};
+
+// Function to display the current question
+const displayQuestion = () => {
+    const question = quizData[currentQuestionIndex];
+    quizContent.innerHTML = `<p>${question.question}</p>`;
+    
+    // Clear previous options
+    answerOptions.innerHTML = '';
+
+    // Display answer options
+    question.answers.forEach(answer => {
+        answerOptions.innerHTML += `
+            <div>
+                <input type="radio" name="answer" value="${answer}" id="${answer}" />
+                <label for="${answer}">${answer}</label>
+            </div>
+        `;
+    });
+};
+
+// Function to show the quiz modal
+const showQuizModal = () => {
+    quizModal.classList.remove('hidden');
+    quizModal.classList.add('show');
+    displayFact();
+    displayQuestion();
+};
+
+// Function to close the quiz modal
+const closeQuizModal = () => {
+    quizModal.classList.remove('show');
+    quizModal.classList.add('hidden');
+};
+
+// Function to handle answer submission
+const handleAnswerSubmission = () => {
+    const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+
+    if (!selectedAnswer) {
+        alert("Please select an answer.");
+        return;
+    }
+
+    const selectedValue = selectedAnswer.value;
+    const correctAnswer = quizData[currentQuestionIndex].correctAnswer;
+
+    if (selectedValue === correctAnswer) {
+        alert('Correct answer! 🎉');
+    } else {
+        alert('Incorrect answer. Try again! 😅');
+    }
+
+    // Move to the next question
+    currentQuestionIndex++;
+    if (currentQuestionIndex >= quizData.length) {
+        currentQuestionIndex = 0; // Restart quiz
+    }
+    displayQuestion();
+};
+
+// Event listeners
+startQuizButton.addEventListener('click', showQuizModal);
+closeQuizButton.addEventListener('click', closeQuizModal);
+submitAnswerButton.addEventListener('click', handleAnswerSubmission);
+
+// Close modal when clicking outside of it
+window.addEventListener('click', (e) => {
+    if (e.target === quizModal) {
+        closeQuizModal();
+    }
+});
+
+// Show the quiz modal after 30 seconds
+setTimeout(() => {
+    console.log("30 seconds passed! Showing modal...");
+    showQuizModal();
+}, 30000); // 30 seconds delay
+
+// FAQ data and related functions remain unchanged
+const faqData = {
+  Gym: [
+    { question: "What is the best time to go to the gym?", answer: "The best time is the time you can stick to consistently." },
+    { question: "How often should I work out?", answer: "Aim for 3-5 times per week, focusing on different muscle groups." },
+    { question: "What should I wear to the gym?", answer: "Wear comfortable clothing and proper footwear." }
+  ],
+  Weights: [
+    { question: "Should I lift heavy or light weights?", answer: "Heavy weights build strength, while lighter weights improve endurance." },
+    { question: "What are compound exercises?", answer: "Exercises like squats work multiple muscle groups efficiently." },
+    { question: "How many reps should I do?", answer: "Aim for 8-12 reps for muscle growth." }
+  ],
+  Diet: [
+    { question: "What should I eat after a workout?", answer: "A mix of protein and carbs like a protein shake and fruit." },
+    { question: "How important is hydration?", answer: "Hydration is crucial for performance and recovery." },
+    { question: "What are healthy snacks?", answer: "Fruits, nuts, and yogurt are great options." }
+  ],
+  Cardio: [
+    { question: "How long should I do cardio?", answer: "Aim for at least 150 minutes of moderate aerobic activity per week." },
+    { question: "Is running better than cycling?", answer: "It depends on your goals; both are effective for cardiovascular health." }
+  ],
+  Nutrition: [
+    { question: "What is a balanced diet?", answer: "A diet that includes a variety of foods from all food groups." },
+    { question: "How much protein do I need?", answer: "It varies, but generally 0.8 grams per kilogram of body weight is a good start." }
+  ],
+  Wellness: [
+    { question: "How can I reduce stress?", answer: "Practice mindfulness, exercise, and ensure adequate sleep." },
+    { question: "What are the benefits of yoga?", answer: "Yoga improves flexibility, strength, and mental clarity." }
+  ],
+  Recovery: [
+    { question: "How important is rest?", answer: "Rest is crucial for muscle recovery and overall health." },
+    { question: "What are some recovery techniques?", answer: "Stretching, foam rolling, and hydration are effective." }
+  ]
+};
+
+const faqContainer = document.getElementById("faq-container");
+
+// Generate random FAQs
+const generateRandomFAQs = () => {
+  const allFAQs = Object.keys(faqData).flatMap(category => faqData[category]);
+  const randomFAQs = [];
+  while (randomFAQs.length < 3) {
+    const randomIndex = Math.floor(Math.random() * allFAQs.length);
+    const randomFAQ = allFAQs[randomIndex];
+    if (!randomFAQs.includes(randomFAQ)) {
+      randomFAQs.push(randomFAQ);
+    }
+  }
+  return randomFAQs;
+};
+
+// Display FAQs with fade-in effect
+const displayFAQs = (faqs) => {
+  faqContainer.innerHTML = ""; // Clear current FAQs
+  if (faqs.length === 0) {
+    faqContainer.innerHTML = "<p>No FAQs found.</p>";
+    return;
+  }
+  faqs.forEach((faq, index) => {
+    const faqItem = document.createElement("div");
+    faqItem.classList.add("bg-transparent", "shadow", "rounded-lg", "p-4", "faq-item");
+    faqItem.innerHTML = `
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="path/to/image.jpg" alt="FAQ Image" class="faq-image" />
+            <p class="title">${faq.question}</p>
+            <p>Hover Me</p>
+          </div>
+          <div class="flip-card-back">
+            <p class="title">Answer</p>
+            <p>${faq.answer}</p>
+            <a href="#" id="view-more" style="color: #0f44d6;">View More</a>
+          </div>
+        </div>
+      </div>
+    `;
+    faqContainer.appendChild(faqItem);
+    setTimeout(() => faqItem.classList.add("active"), index * 100); // Stagger fade-in
+  });
+};
+
+// Function to filter FAQs based on the search input
+function filterFAQs() {
+  const searchInput = document.getElementById('search').value.toLowerCase();
+  const allFAQs = Object.keys(faqData).flatMap((category) =>
+    faqData[category].map((faq) => ({ ...faq, category }))
+  );
+
+  const filteredFAQs = allFAQs.filter(faq => faq.question.toLowerCase().includes(searchInput));
+  displayFAQs(filteredFAQs);
+}
+
+// On page load
+window.onload = () => {
+  const initialRandomFAQs = generateRandomFAQs(); // Generate initial random FAQs
+  displayFAQs(initialRandomFAQs); // Display them
+  cycleRandomFAQs(); // Start random cycling
+};
+
+// Initialize random FAQ generator
+const initRandomFAQs = () => {
+  const randomFAQs = generateRandomFAQs();
+  displayFAQs(randomFAQs);
+};
+
+// Add a flag to track whether random generation should continue
+let shouldGenerateRandomFAQs = true;
+
+// Cycle random FAQs every 8 seconds if no category selected
+const cycleRandomFAQs = () => {
+  intervalId = setInterval(() => {
+    if (shouldGenerateRandomFAQs && !document.querySelector(".dropdown-trigger.active")) {
+      initRandomFAQs();
+    } else {
+      clearInterval(intervalId); // Clear the interval if random generation is not needed
+    }
+  }, 8000);
+};
+
+// Handle category selection
+document.querySelectorAll(".dropdown-trigger").forEach((button) => {
+  button.addEventListener("click", () => {
+    const category = button.dataset.category;
+    const categoryFAQs = faqData[category] || []; // Ensure it defaults to an empty array if category not found
+    displayFAQs(categoryFAQs); // Display selected category FAQs
+    shouldGenerateRandomFAQs = false; // Stop random generation
+  });
+});
+
+// Show all FAQs
+document.getElementById("show-all").addEventListener("click", () => {
+  const allFAQs = Object.keys(faqData).flatMap((category) =>
+    faqData[category].map((faq) => ({ ...faq, category }))
+  );
+  displayFAQs(allFAQs); // Display all FAQs
+  shouldGenerateRandomFAQs = false; // Stop random generation
+});
+
+// Event listener for the search input field
+document.getElementById('search').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault(); // Prevent form submission
+    const loaderModal = document.getElementById('loader-modal');
+    loaderModal.classList.remove('hidden'); // Show the loader modal
+    setTimeout(() => {
+      loaderModal.classList.add('hidden'); // Hide the loader modal after 2 seconds
+      filterFAQs();
+      shouldGenerateRandomFAQs = false; // Stop random generation
+    }, 2000); // Show loader for 2 seconds
+  }
+});
+
+// Start cycling random FAQs
+cycleRandomFAQs();
+  </script>
+
+</body></html>
